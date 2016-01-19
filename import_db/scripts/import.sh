@@ -1,0 +1,1 @@
+psql -U protwis -h localhost -o /dev/null protwis < /protwis/db/protwis.sql 2>/dev/null
