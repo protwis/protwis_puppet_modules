@@ -1,4 +1,4 @@
-class python_virtualenv {
+class python {
 
     $packages = $operatingsystem ? {
         "Ubuntu" => [
