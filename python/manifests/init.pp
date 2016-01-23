@@ -38,7 +38,7 @@ class python {
     } ->
     # install pip
     exec { "install-pip":
-        cwd => "/protwis",
+        cwd => "/",
         command => $operatingsystem ? {
             "CentOS" => "wget https://bootstrap.pypa.io/get-pip.py;python3 get-pip.py",
             "Ubuntu" => "apt install -y python3-pip",
@@ -53,14 +53,14 @@ class python {
 
     # create virtualenv
     exec { "create-virtualenv":
-        command => "virtualenv -p python3 /protwis/env",
+        command => "virtualenv -p python3 /env",
         require => Exec["install-virtualenv"],
     }
 
     # install packages inside the virtualenv with pip
     define puppet::install::pip ($pip_package = $title) {
         exec { "install-$pip_package":
-            command => "/protwis/env/bin/pip3 install $pip_package",
+            command => "/env/bin/pip3 install $pip_package",
             timeout => 1800,
             require => Exec["create-virtualenv"],
         }
@@ -72,7 +72,7 @@ class python {
     puppet::install::pip { $pip_packages: } ->
     # install psycopg2 (inside the virtualenv)
     exec { "install-psycopg2":
-        command => "/protwis/env/bin/pip3 install psycopg2",
+        command => "/env/bin/pip3 install psycopg2",
         timeout => 1800,
         require => [Package["postgresql", "postgresql-contrib"], Exec["create-virtualenv"]]
     }
