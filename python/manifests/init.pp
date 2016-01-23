@@ -38,7 +38,7 @@ class python {
     } ->
     # install pip
     exec { "install-pip":
-        cwd => "/",
+        cwd => "/tmp",
         command => $operatingsystem ? {
             "CentOS" => "wget https://bootstrap.pypa.io/get-pip.py;python3 get-pip.py",
             "Ubuntu" => "apt install -y python3-pip",
@@ -62,18 +62,12 @@ class python {
         exec { "install-$pip_package":
             command => "/env/bin/pip3 install $pip_package",
             timeout => 1800,
-            require => Exec["create-virtualenv"],
+            require => [Package["postgresql", "postgresql-contrib"], Exec["create-virtualenv"]]
         }
     }
 
-    $pip_packages = ["ipython", "django", "django-debug-toolbar", "biopython", "xlrd", "numpy", "PyYAML",
+    $pip_packages = ["ipython", "django", "django-debug-toolbar", "psycopg2", "biopython", "xlrd", "numpy", "PyYAML",
         "djangorestframework", "django-rest-swagger", "XlsxWriter", "sphinx"]
 
-    puppet::install::pip { $pip_packages: } ->
-    # install psycopg2 (inside the virtualenv)
-    exec { "install-psycopg2":
-        command => "/env/bin/pip3 install psycopg2",
-        timeout => 1800,
-        require => [Package["postgresql", "postgresql-contrib"], Exec["create-virtualenv"]]
-    }
+    puppet::install::pip { $pip_packages: }
 }

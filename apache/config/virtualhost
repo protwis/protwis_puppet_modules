@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-    WSGIDaemonProcess protwis python-path=/protwis/sites/protwis:/protwis/env/lib/python3.4/site-packages
+    WSGIDaemonProcess protwis python-path=/protwis/sites/protwis:/env/lib/python3.4/site-packages
     WSGIProcessGroup protwis
 
     Alias /static/ /protwis/static/protwis/

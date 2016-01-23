@@ -95,13 +95,13 @@ class apache {
     # generate blast database and collect static files before starting apache
     exec { "build_blast_db":
         cwd => "/protwis/sites/protwis",
-        command => "/protwis/env/bin/python3 manage.py build_blast_database",
+        command => "/env/bin/python3 manage.py build_blast_database",
         environment => ["LC_ALL=en_US.UTF-8"],
         require => Exec["import-db-dump", "install-psycopg2"],
     }
     exec { "collect-static":
         cwd => "/protwis/sites/protwis",
-        command => "/protwis/env/bin/python3 manage.py collectstatic --noinput",
+        command => "/env/bin/python3 manage.py collectstatic --noinput",
         require => Exec["import-db-dump", "install-psycopg2"],
     }
 
