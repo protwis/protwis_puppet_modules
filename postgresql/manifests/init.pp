@@ -23,7 +23,8 @@ class postgresql {
     # RedHat distros require extra commands to init postgres
     if $osfamily == "RedHat" {
         exec { "init-postgres-db":
-            command => "postgresql-setup initdb",
+            command => "/usr/bin/true",
+            unless => "postgresql-setup initdb", # if this command fails (DB already initialized, do nothing)
             require => Package['postgresql'],
         }
 
