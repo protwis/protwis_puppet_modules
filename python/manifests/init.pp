@@ -67,7 +67,7 @@ class python {
     }
 
     $pip_packages = ["ipython", "django", "django-debug-toolbar", "psycopg2", "biopython", "xlrd", "numpy", "PyYAML",
-        "djangorestframework", "django-rest-swagger", "XlsxWriter", "sphinx"]
+        "djangorestframework", "django-rest-swagger", "XlsxWriter", "sphinx","openpyxl"]
 
     puppet::install::pip { $pip_packages: }
 }
