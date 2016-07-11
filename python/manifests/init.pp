@@ -4,7 +4,6 @@ class python {
         "Ubuntu" => [
                 "python3.4",
                 "python3-pip",
-		"python3-lxml",
                 # for python2, will be removed
                 "python-biopython",
                 "python-openbabel",
@@ -68,7 +67,7 @@ class python {
     }
 
     $pip_packages = ["ipython", "django", "django-debug-toolbar", "psycopg2", "biopython", "xlrd", "numpy", "PyYAML",
-        "djangorestframework", "django-rest-swagger", "XlsxWriter", "sphinx","openpyxl", "requests", "chardet", "urllib3"]
+        "djangorestframework", "django-rest-swagger", "XlsxWriter", "sphinx","openpyxl", "lxml", "requests", "chardet", "urllib3"]
 
     puppet::install::pip { $pip_packages: }
 }
