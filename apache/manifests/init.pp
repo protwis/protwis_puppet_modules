@@ -22,7 +22,7 @@ class apache {
                 cwd => "/protwis",
                 command => "bash /protwis/conf/protwis_puppet_modules/apache/scripts/mod_wsgi.sh",
                 timeout => 3600,
-                require => [ File["/usr/local/bin/python3"], Package[$apache_main_package, "python34-devel"] ],
+                require => [ File["/usr/local/bin/python3"], Package[$apache_main_package, "python35-devel"] ],
             }->
             exec { "enable-mod_wsgi":
                 command => "echo 'LoadModule wsgi_module modules/mod_wsgi.so' >> /etc/httpd/conf/httpd.conf",
