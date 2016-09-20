@@ -2,7 +2,7 @@ class python {
 
     $packages = $operatingsystem ? {
         "Ubuntu" => [
-                "python3.4",
+                "python3.5",
                 "python3-pip",
                 # for python2, will be removed
                 "python-biopython",
@@ -11,8 +11,8 @@ class python {
                 "python-yaml",
         ],
         "CentOS" => [
-                "python34",
-                "python34-devel",
+                "python35",
+                "python35-devel",
                 # for python2, will be removed
                 "python-biopython",
                 "python-openbabel",
@@ -30,10 +30,10 @@ class python {
     # create a python3 symlink, because the names of the executable differ between OSes
     file { "/usr/local/bin/python3":
         ensure => "link",
-        target => "/usr/bin/python3.4",
+        target => "/usr/bin/python3.5",
         require => $operatingsystem ? {
-            "CentOS" => Package["python34"],
-            "Ubuntu" => Package["python3.4"],
+            "CentOS" => Package["python35"],
+            "Ubuntu" => Package["python3.5"],
         }
     } ->
     # install pip
