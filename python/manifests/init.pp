@@ -2,7 +2,7 @@ class python {
 
     $packages = $operatingsystem ? {
         "Ubuntu" => [
-                "python3.5",
+                "python3.4",
                 "python3-pip",
                 # for python2, will be removed
                 "python-biopython",
@@ -11,8 +11,8 @@ class python {
                 "python-yaml",
         ],
         "CentOS" => [
-                "python35",
-                "python35-devel",
+                "python34",
+                "python34-devel",
                 # for python2, will be removed
                 "python-biopython",
                 "python-openbabel",
@@ -30,10 +30,10 @@ class python {
     # create a python3 symlink, because the names of the executable differ between OSes
     file { "/usr/local/bin/python3":
         ensure => "link",
-        target => "/usr/bin/python3.5",
+        target => "/usr/bin/python3.4",
         require => $operatingsystem ? {
-            "CentOS" => Package["python35"],
-            "Ubuntu" => Package["python3.5"],
+            "CentOS" => Package["python34"],
+            "Ubuntu" => Package["python3.4"],
         }
     } ->
     # install pip
@@ -67,7 +67,39 @@ class python {
     }
 
     $pip_packages = ["ipython", "django", "django-debug-toolbar", "psycopg2", "biopython", "xlrd", "numpy", "PyYAML",
-        "djangorestframework", "django-rest-swagger", "XlsxWriter", "sphinx","openpyxl"]
-
+        "djangorestframework", "django-rest-swagger", "XlsxWriter", "sphinx", "openpyxl", "xmltodict", "pandas"]
     puppet::install::pip { $pip_packages: }
+
+        # download and install dssp
+    exec { "download-dssp":
+        command => "/usr/bin/wget -q ftp://ftp.cmbi.ru.nl/pub/software/dssp/dssp-2.0.4-linux-amd64 -O /env/bin/dssp",
+        creates => "/env/bin/dssp",
+        require => Exec["create-virtualenv"],
+    }
+
+    file { "/env/bin/dssp":
+        mode => 0755,
+        require => Exec["download-dssp"],
+    }
+
+    # download and install MODELLER
+    exec { "download-modeller":
+        command => "/usr/bin/wget -q https://salilab.org/modeller/9.18/modeller_9.18-1_amd64.deb -O /env/lib/mod9.18_install.deb",
+        creates => "/env/lib/mod9.18_install.deb",
+        require => Exec["create-virtualenv"],
+    }
+    exec { "install-modeller":
+        command => "sudo env KEY_MODELLER=MODELIRANJE dpkg -i /env/lib/mod9.18_install.deb",
+        require => Exec["download-modeller"],
+    }
+    exec { "move-modeller":
+        command => "sudo mv /usr/lib/python3.4/dist-packages/modeller /env/lib/python3.4/site-packages/",
+        creates => "/env/lib/python3.4/site-packages/modeller",
+        require => Exec["install-modeller"],
+    }
+    exec { "move_modeller.so":
+        command => "sudo mv /usr/lib/python3.4/dist-packages/_modeller.so /env/lib/python3.4/site-packages/",
+        creates => "/env/lib/python3.4/site-packages/_modeller.so",
+        require => Exec["install-modeller"],
+    }
 }
