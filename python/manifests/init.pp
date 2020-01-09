@@ -67,8 +67,7 @@ class python {
 
     $pip_packages = ["ipython", "django", "django-debug-toolbar", "psycopg2-binary", "biopython", "xlrd", "numpy", "PyYAML",
         "djangorestframework", "django-rest-swagger", "XlsxWriter", "sphinx", "openpyxl", "xmltodict", "pandas",
-        "django-polymorphic", "mmtf-python", "scipy", "sklearn", "freesasa"]
-
+	    "django-polymorphic", "mmtf-python", "scipy", "sklearn", "freesasa", "lxml", "reportlab", "svglib"]
     puppet::install::pip { $pip_packages: }
 
     # download and install dssp
