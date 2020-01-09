@@ -23,22 +23,15 @@ class import_db {
 
     # download db dump
     exec { "dl-db-dump":
-        command => "curl http://files.gpcrdb.org/protwis_sp.sql.gz > /protwis/db/protwis.sql.gz",
+        command => "curl http://files.gpcrdb.org/protwis_full.sql.gz > /protwis/db/protwis.sql.gz",
         timeout => 3600,
         require => [Exec["create-postgres-db"], File['/protwis/db']],
     }
 
-    # extract db dump
-    exec { "extract-db-dump":
-        cwd => "/protwis/db",
-        command => "gunzip -f protwis.sql.gz",
-        require => Exec["dl-db-dump"],
-    }
-
-    # import db dump
+    # import db dump directly from gz
     exec { "import-db-dump":
-        command => "expect -f /protwis/conf/protwis_puppet_modules/import_db/scripts/importdb.exp",
-        timeout => 3600,
-        require => [ Exec["extract-db-dump"], Package["expect"], ],
+         command => "expect -f /protwis/conf/protwis_puppet_modules/import_db/scripts/importdb.exp",
+         timeout => 3600,
+        require => [ Exec["dl-db-dump"], Package["expect"], ],
     }
 }
