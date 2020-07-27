@@ -82,6 +82,7 @@ class python {
     "ipython",
     "django",
     "django-debug-toolbar",
+    "django-extensions",               
     "psycopg2-binary",
     "biopython",
     "xlrd",
