@@ -103,7 +103,8 @@ class python {
     "lxml",
     "reportlab",
     "svglib",
-    "jq"
+    "jq",
+    "chembl_webresource_client"
   ]
 
   puppet::install::pip { $pip_packages: }
