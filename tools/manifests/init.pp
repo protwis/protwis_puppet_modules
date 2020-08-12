@@ -10,6 +10,7 @@ class tools {
       "tig",
       "clustalo",
       "ncbi-blast+",
+      "phylip",
     ],
     "CentOS" => [
       "expect",
