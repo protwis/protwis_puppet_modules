@@ -93,7 +93,8 @@ class python {
     "jq",
     "chembl_webresource_client",
     "google-api-python-client",
-    "oauth2client"
+    "oauth2client",
+    "gunicorn"               
   ]
 
   puppet::install::pip { $pip_packages: }
