@@ -1,6 +1,8 @@
 
 # install packages inside the virtualenv with pip
-define puppet::install::pip ($pip_package = $title) {
+define puppet::install::pip (
+  $pip_package = $title
+) {
   exec { "install-$pip_package":
     command => "/env/bin/pip3 install $pip_package",
     timeout => 1800,
@@ -48,7 +50,7 @@ class python {
 
   # install packages
   package { $packages:
-    ensure => present,
+    ensure  => present,
     require => Exec["update-package-repo"]
   }
 
@@ -82,7 +84,7 @@ class python {
     "ipython",
     "django",
     "django-debug-toolbar",
-    "django-extensions",               
+    "django-extensions",
     "psycopg2-binary",
     "biopython",
     "xlrd",
@@ -104,7 +106,10 @@ class python {
     "reportlab",
     "svglib",
     "jq",
-    "chembl_webresource_client"
+    "chembl_webresource_client",
+    "google-api-python-client",
+    "oauth2client",
+    "gunicorn"
   ]
 
   puppet::install::pip { $pip_packages: }
@@ -117,7 +122,7 @@ class python {
   }
 
   file { "/env/bin/dssp":
-    mode => "0755",
+    mode    => "0755",
     require => Exec["download-dssp"],
   }
 
