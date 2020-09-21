@@ -13,15 +13,15 @@ class python {
 
   $packages = $operatingsystem ? {
     "Ubuntu" => [
-      "python3.7",
-      "python3.7-dev",
-      "python3.7-venv",
+      "python3",
+      "python3-dev",
+      "python3-venv",
       "python3-pip",
       # for python2, will be removed
-      "python-biopython",
-      "python-openbabel",
-      "python-rdkit",
-      "python-yaml",
+      "python3-biopython",
+      "python3-openbabel",
+      "python3-rdkit",
+      "python3-yaml",
       "libpq-dev",
     ],
     "CentOS" => [
@@ -33,6 +33,18 @@ class python {
       #"python-rdkit",
       "PyYAML",
     ],
+    "Fedora" => [
+      "python3",
+      "python3-devel",
+      "python3-virtualenv",
+      "python3-pip",
+      # for python2, will be removed
+      "python3-biopython",
+      "python3-openbabel",
+      "python3-rdkit",
+      "python3-pyyaml",
+      "libpq-devel",
+    ],
   }
 
   # install packages
@@ -43,11 +55,12 @@ class python {
 
   # create a python3 symlink, because the names of the executable differ between OSes
   file { "/usr/local/bin/python3":
-    ensure  => "link",
-    target  => "/usr/bin/python3.7",
+    ensure => "link",
+    target => "/usr/bin/python3",
     require => $operatingsystem ? {
-      "CentOS" => Package["python37"],
-      "Ubuntu" => Package["python3.7"],
+      "CentOS" => Package["python3"],
+      "Ubuntu" => Package["python3"],
+      "Fedora" => Package["python3"],
     }
   }
 
@@ -63,13 +76,14 @@ class python {
 
   # create virtualenv
   exec { "create-virtualenv":
-    command => "python3.7 -m venv /env",
+    command => "python3 -m venv /env",
   }
 
   $pip_packages = [
     "ipython",
     "django",
     "django-debug-toolbar",
+    "django-extensions",
     "psycopg2-binary",
     "biopython",
     "xlrd",
@@ -94,7 +108,7 @@ class python {
     "chembl_webresource_client",
     "google-api-python-client",
     "oauth2client",
-    "gunicorn"               
+    "gunicorn"
   ]
 
   puppet::install::pip { $pip_packages: }
@@ -111,25 +125,47 @@ class python {
     require => Exec["download-dssp"],
   }
 
-  # download and install MODELLER
+  # download and install MODELLER for Ubuntu
   exec { "download-modeller":
-    command =>
-      "/usr/bin/wget -q https://salilab.org/modeller/9.23/modeller_9.23-1_amd64.deb -O /env/lib/mod9.23-1_install.deb",
-    creates => "/env/lib/mod9.23-1_install.deb",
+    command => "curl https://salilab.org/modeller/9.24/modeller_9.24-1_amd64.deb -o /tmp/modeller_9.24-1_amd64.deb",
+    creates => "/tmp/modeller_9.24-1_amd64.deb",
     require => Exec["create-virtualenv"],
   }
   exec { "install-modeller":
-    command => "sudo env KEY_MODELLER=MODELIRANJE dpkg -i /env/lib/mod9.23-1_install.deb",
+    command => "sudo env KEY_MODELLER=MODELIRANJE dpkg -i /tmp/modeller_9.24-1_amd64.deb",
     require => Exec["download-modeller"],
   }
   exec { "move-modeller":
-    command => "sudo mv /usr/lib/python3.7/dist-packages/modeller /env/lib/python3.7/site-packages/",
-    creates => "/env/lib/python3.7/site-packages/modeller",
+    command => "sudo mv /usr/lib/modeller9.24/modlib/modeller /env/lib/python3.8/site-packages/",
+    creates => "/env/lib/python3.8/site-packages/modeller",
     require => Exec["install-modeller"],
   }
   exec { "move_modeller.so":
-    command => "sudo mv /usr/lib/python3.7/dist-packages/_modeller.so /env/lib/python3.7/site-packages/",
-    creates => "/env/lib/python3.7/site-packages/_modeller.so",
+    command => "sudo mv /usr/lib/modeller9.24/lib/x86_64-intel8/python3.3/_modeller.so /env/lib/python3.8/site-packages/",
+    creates => "/env/lib/python3.8/site-packages/_modeller.so",
     require => Exec["install-modeller"],
   }
 }
+
+# # download and install MODELLER for Fedora/RedHat
+# exec { "download-modeller":
+#   command =>
+#     "curl https://salilab.org/modeller/9.24/modeller-9.24-1.x86_64.rpm -o /tmp/modeller-9.24-1.x86_64.rpm",
+#   creates => "/tmp/modeller-9.24-1.x86_64.rpm",
+#   require => Exec["create-virtualenv"],
+# }
+# exec { "install-modeller":
+#   command => "sudo env KEY_MODELLER=MODELIRANJE rpm -Uvh /tmp/modeller-9.24-1.x86_64.rpm",
+#   require => Exec["download-modeller"],
+# }
+# exec { "move-modeller":
+#   command => "sudo mv /usr/lib/modeller9.24/modlib/modeller /env/lib/python3.8/site-packages/",
+#   creates => "/env/lib/python3.8/site-packages/modeller",
+#   require => Exec["install-modeller"],
+# }
+# exec { "move_modeller.so":
+#   command => "sudo mv /usr/lib/modeller9.24/lib/x86_64-intel8/python3.3/_modeller.so /env/lib/python3.8/site-packages/",
+#   creates => "/env/lib/python3.8/site-packages/_modeller.so",
+#   require => Exec["install-modeller"],
+# }
+# }
