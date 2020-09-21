@@ -1,4 +1,3 @@
-
 # install packages inside the virtualenv with pip
 define puppet::install::pip (
   $pip_package = $title
